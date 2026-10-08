@@ -1,0 +1,5 @@
+out/
+sources.txt
+*.class
+javafx-sdk-25/
+swift.psd

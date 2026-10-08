@@ -1,0 +1,369 @@
+/* ============================================================================
+   Swift — Neumorphic ("Soft UI") design system
+   ----------------------------------------------------------------------------
+   - No hard borders anywhere: edges are implied purely by layered soft
+     shadows (light + dark) cast from a single top-left light source.
+   - Low-contrast monochrome base so extrusions/intrusions stay readable.
+   - Design tokens are CSS variables — tweak the lighting model in one place.
+   - Interactive elements press INTO the surface (inset shadow) on :active.
+   ============================================================================ */
+
+.root {
+    /* --- Palette ------------------------------------------------------- */
+    -bg: #e6ebf3;                      /* app background (soft gray-blue)  */
+    -bg-deep: #d9e0eb;                 /* recessed / inset wells           */
+    -text: #26334d;
+    -muted: #7a869e;
+    -accent: #4a7ddb;
+    -accent-strong: #3a66c4;
+
+    /* --- Light source (top-left) --------------------------------------- */
+    -neu-light: rgba(255, 255, 255, 0.92);
+
+    /* --- Elevation tokens ----------------------------------------------
+       Extrusion: dark umbra falling down-right. JavaFX allows a single
+       -fx-effect per node, so the light highlight comes from the surface
+       gradients below (bright top-left -> darker bottom-right).          */
+    -neu-out: dropshadow(gaussian, rgba(163, 177, 198, 0.55), 26, 0, 10, 10);
+    -neu-out-sm: dropshadow(gaussian, rgba(163, 177, 198, 0.5), 14, 0, 5, 5);
+    -neu-in: innershadow(gaussian, rgba(163, 177, 198, 0.55), 14, 0.25, 4, 4);
+    -neu-in-sm: innershadow(gaussian, rgba(163, 177, 198, 0.5), 8, 0.2, 3, 3);
+
+    /* --- Surfaces -------------------------------------------------------- */
+    -neu-surface: linear-gradient(to bottom right, #f3f6fb, #dde3ee);
+    -neu-surface-hover: linear-gradient(to bottom right, #f8fafd, #e2e8f2);
+    -neu-pressed: linear-gradient(to bottom right, #dbe1ec, #eef2f8);
+
+    -fx-font-family: "Inter", "Segoe UI", sans-serif;
+    -fx-font-size: 13px;
+    -fx-base: -bg;
+    -fx-background: -bg;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-text-fill: -text;
+}
+
+.label { -fx-text-fill: -text; }
+.app-root, .content { -fx-background-color: -bg; }
+
+.icon { -fx-background-color: -muted; }
+.button:hover .icon, .toggle-button:hover .icon { -fx-background-color: -text; }
+
+/* ============================================================================
+   Sidebar — flush with the background, separated only by a soft umbra
+   ============================================================================ */
+
+.sidebar {
+    -fx-background-color: linear-gradient(to right, #eaf0f8 0%, #e3e9f2 78%, rgba(230, 235, 243, 0) 100%);
+    -fx-effect: dropshadow(gaussian, rgba(163, 177, 198, 0.3), 28, 0, 6, 0);
+}
+.brand-name { -fx-font-size: 18px; -fx-font-family: "Inter SemiBold"; -fx-font-weight: normal; }
+.section-label { -fx-text-fill: -muted; -fx-font-size: 11px; -fx-font-family: "Inter SemiBold"; -fx-font-weight: normal; -fx-padding: 6 0 0 4; }
+.sidebar-footer { -fx-text-fill: -muted; -fx-font-size: 11px; -fx-padding: 0 0 0 4; }
+
+/* Hairline divider rendered as a soft inset groove instead of a border. */
+.separator { -fx-padding: 6 0; }
+.separator .line {
+    -fx-border-color: transparent;
+    -fx-background-color: rgba(163, 177, 198, 0.5);
+    -fx-pref-height: 2;
+    -fx-background-radius: 2;
+}
+
+/* Nav items: extruded pills; the selected item presses into the surface. */
+.nav-button, .nav-button:hover, .nav-button:selected {
+    -fx-background-radius: 18;
+    -fx-background-insets: 0;
+    -fx-padding: 12 14;
+    -fx-cursor: hand;
+}
+.nav-button { -fx-background-color: transparent; -fx-text-fill: -muted; }
+.nav-button:hover { -fx-background-color: -neu-surface; -fx-effect: -neu-out-sm; }
+.nav-button:selected { -fx-background-color: -neu-pressed; -fx-effect: -neu-in-sm; }
+.nav-button .label { -fx-text-fill: -muted; -fx-font-family: "Inter Medium"; -fx-font-weight: normal; }
+.nav-button:hover .label, .nav-button:selected .label { -fx-text-fill: -text; }
+.nav-button:selected .icon { -fx-background-color: -accent; }
+
+/* Bottom tab bar (compact widths) */
+.tab-bar {
+    -fx-background-color: -bg;
+    -fx-effect: dropshadow(gaussian, rgba(163, 177, 198, 0.45), 24, 0, 0, -8);
+    -fx-padding: 10 12;
+    -fx-spacing: 8;
+}
+.tab-button { -fx-background-color: transparent; -fx-background-radius: 18; -fx-padding: 9 4; -fx-cursor: hand; }
+.tab-button:hover { -fx-background-color: -neu-surface; -fx-effect: -neu-out-sm; }
+.tab-button:selected { -fx-background-color: -neu-pressed; -fx-effect: -neu-in-sm; }
+.tab-label { -fx-text-fill: -muted; -fx-font-size: 11px; }
+.tab-button:selected .tab-label { -fx-text-fill: -text; }
+.tab-button:selected .icon { -fx-background-color: -accent; }
+
+/* ============================================================================
+   Top bar — floating neumorphic search pill
+   ============================================================================ */
+
+.top-bar { -fx-background-color: -bg; -fx-padding: 26 28 12 28; -fx-spacing: 20; }
+.clear-button { -fx-background-color: transparent; -fx-background-radius: 14; -fx-padding: 8; -fx-cursor: hand; }
+.clear-button:hover { -fx-background-color: -bg-deep; }
+.clear-button:pressed { -fx-effect: -neu-in-sm; }
+
+.open-menu {
+    -fx-background-color: -neu-surface;
+    -fx-background-radius: 18;
+    -fx-padding: 11 18;
+    -fx-text-fill: -text;
+    -fx-cursor: hand;
+    -fx-effect: -neu-out-sm;
+}
+.open-menu:hover { -fx-background-color: -neu-surface-hover; }
+.open-menu:showing,
+.open-menu:pressed { -fx-background-color: -neu-pressed; -fx-effect: -neu-in-sm; }
+.open-menu .label { -fx-text-fill: -text; }
+.open-menu .arrow-button { -fx-padding: 0 0 0 6; }
+.open-menu .arrow { -fx-background-color: -muted; }
+
+/* ============================================================================
+   Pages & cards — generous whitespace, soft extruded panels
+   ============================================================================ */
+
+.page, .page > .viewport, .page-content { -fx-background-color: transparent; }
+.page { -fx-background-insets: 0; -fx-padding: 0; }
+.page-title { -fx-font-size: 28px; -fx-font-family: "Inter Bold"; -fx-font-weight: normal; }
+.page-subtitle, .muted-note { -fx-text-fill: -muted; -fx-font-size: 13px; }
+.section-title { -fx-font-size: 18px; -fx-font-family: "Inter SemiBold"; -fx-font-weight: normal; }
+.link-button { -fx-background-color: transparent; -fx-text-fill: -muted; -fx-padding: 4 8; -fx-cursor: hand; -fx-background-radius: 10; }
+.link-button:hover { -fx-text-fill: -accent; -fx-background-color: -neu-surface; -fx-effect: -neu-out-sm; }
+
+.quick-card, .tile, .empty-card, .empty-panel {
+    -fx-background-color: -neu-surface;
+    -fx-background-radius: 24;
+    -fx-effect: -neu-out;
+}
+.quick-card, .tile {
+    -fx-padding: 16;
+    -fx-cursor: hand;
+}
+.quick-card { -fx-padding: 14 22 14 14; }
+.quick-card:hover, .tile:hover { -fx-background-color: -neu-surface-hover; }
+.quick-card:pressed, .tile:pressed,
+.quick-card:focused, .tile:focused { -fx-background-color: -neu-pressed; -fx-effect: -neu-in-sm; }
+.card-title { -fx-font-family: "Inter SemiBold"; -fx-font-weight: normal; -fx-text-overrun: ellipsis; }
+.card-sub { -fx-text-fill: -muted; -fx-font-size: 12px; -fx-text-overrun: ellipsis; }
+
+/* Album art keeps its own accent gradient; just soften the shadow. */
+.art { -fx-effect: -neu-out-sm; }
+.art-glyph { -fx-background-color: rgba(255, 255, 255, 0.68); }
+
+.empty-card { -fx-padding: 56 40 56 40; }
+.empty-icon .icon { -fx-background-color: -accent; }
+.empty-title { -fx-font-size: 18px; -fx-font-family: "Inter SemiBold"; -fx-font-weight: normal; }
+.empty-subtitle { -fx-text-fill: -muted; }
+
+/* ============================================================================
+   Buttons — extruded pills that press inward
+   ============================================================================ */
+
+.primary-button {
+    -fx-background-color: linear-gradient(to bottom right, #5b8cf5, #3a66c4);
+    -fx-text-fill: white;
+    -fx-font-family: "Inter SemiBold";
+    -fx-font-weight: normal;
+    -fx-background-radius: 18;
+    -fx-padding: 12 26;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(74, 125, 219, 0.4), 20, 0, 0, 7);
+}
+.primary-button:hover { -fx-background-color: linear-gradient(to bottom right, #6b98fa, #4a7ddb); }
+.primary-button:pressed { -fx-effect: innershadow(gaussian, rgba(30, 55, 110, 0.55), 12, 0.3, 3, 3); }
+
+.secondary-button {
+    -fx-background-color: -neu-surface;
+    -fx-text-fill: -text;
+    -fx-background-radius: 18;
+    -fx-padding: 12 20;
+    -fx-cursor: hand;
+    -fx-graphic-text-gap: 8;
+    -fx-effect: -neu-out-sm;
+}
+.secondary-button:hover { -fx-background-color: -neu-surface-hover; }
+.secondary-button:pressed { -fx-background-color: -neu-pressed; -fx-effect: -neu-in-sm; }
+.secondary-button:disabled { -fx-opacity: 0.45; -fx-effect: none; }
+
+/* ============================================================================
+   Now Playing / media pane
+   ============================================================================ */
+
+.media-pane {
+    -fx-background-color: radial-gradient(center 50% 38%, radius 78%, #f0f4fa 0%, -bg 48%, #dde3ee 100%);
+}
+.audio-state { -fx-background-color: transparent; }
+.now-art-holder { -fx-effect: -neu-out; }
+.now-title { -fx-font-size: 23px; -fx-font-family: "Inter Bold"; -fx-font-weight: normal; }
+.now-sub { -fx-text-fill: -muted; }
+
+/* ============================================================================
+   Queue
+   ============================================================================ */
+
+.queue-list { -fx-background-color: transparent; -fx-background-insets: 0; -fx-padding: 6 0 0 0; }
+.queue-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-background-radius: 18;
+    -fx-padding: 10 14;
+    -fx-text-fill: -text;
+}
+.queue-list .list-cell:filled:hover { -fx-background-color: -neu-surface; -fx-effect: -neu-out-sm; }
+.queue-list .list-cell:filled:selected, .queue-list .list-cell.playing {
+    -fx-background-color: -neu-pressed;
+    -fx-effect: -neu-in-sm;
+}
+.track-index { -fx-text-fill: -muted; -fx-alignment: center; }
+.list-cell.playing .track-index { -fx-text-fill: -accent; }
+
+/* ============================================================================
+   Controls bar — soft extruded deck with inset wells for meta/tools
+   ============================================================================ */
+
+.controls-bar {
+    -fx-background-color: linear-gradient(to bottom, #edf1f8, #e0e6f0);
+    -fx-effect: dropshadow(gaussian, rgba(163, 177, 198, 0.5), 28, 0, 0, -8);
+}
+.player-meta {
+    -fx-background-color: -neu-pressed;
+    -fx-background-radius: 20;
+    -fx-padding: 8 14 8 8;
+    -fx-effect: -neu-in-sm;
+}
+.player-tools {
+    -fx-background-color: -neu-pressed;
+    -fx-background-radius: 20;
+    -fx-padding: 8 10;
+    -fx-effect: -neu-in-sm;
+}
+.transport-row {
+    -fx-background-color: -neu-surface;
+    -fx-background-radius: 28;
+    -fx-padding: 8 12;
+    -fx-effect: -neu-out-sm;
+}
+.progress-row { -fx-padding: 2 6; }
+.track-title { -fx-font-family: "Inter SemiBold"; -fx-font-weight: normal; -fx-text-overrun: ellipsis; }
+.track-sub { -fx-text-fill: -muted; -fx-font-size: 12px; -fx-text-overrun: ellipsis; }
+.time-label { -fx-text-fill: -muted; -fx-font-size: 11px; }
+
+.transport-button, .mode-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 18;
+    -fx-min-width: 36; -fx-min-height: 36; -fx-pref-width: 36; -fx-pref-height: 36;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+.transport-button:hover, .mode-button:hover { -fx-background-color: -neu-surface-hover; -fx-effect: -neu-out-sm; }
+.transport-button:pressed, .mode-button:pressed { -fx-background-color: -neu-pressed; -fx-effect: -neu-in-sm; }
+.mode-button:active .icon { -fx-background-color: -accent; }
+
+.play-button {
+    -fx-background-color: linear-gradient(to bottom right, #5b8cf5, #3a66c4);
+    -fx-background-radius: 26;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(74, 125, 219, 0.45), 20, 0, 0, 6);
+}
+.play-button:hover { -fx-background-color: linear-gradient(to bottom right, #6b98fa, #4a7ddb); }
+.play-button:pressed { -fx-effect: innershadow(gaussian, rgba(30, 55, 110, 0.55), 12, 0.3, 3, 3); }
+.play-button .icon, .play-button:hover .icon { -fx-background-color: white; }
+
+/* ============================================================================
+   Sliders — inset (pressed-in) track with a clearly visible accent fill
+   ============================================================================ */
+
+.slider .track {
+    -fx-background-color: #b9cbe6;
+    /* Must stay small: SliderSkin extends the track by this radius on BOTH
+       ends, so a pill radius like 999 would overflow the slider bounds. */
+    -fx-background-radius: 4;
+    -fx-background-insets: 0;
+    -fx-pref-height: 8;
+    -fx-padding: 4 0 4 0;
+    -fx-effect: -neu-in-sm;
+}
+.slider .thumb {
+    -fx-background-color: -neu-surface-hover;
+    -fx-background-insets: 0;
+    -fx-background-radius: 9;
+    -fx-padding: 8;
+    -fx-effect: -neu-out-sm;
+    -fx-opacity: 1;
+}
+.slider:disabled { -fx-opacity: 1; }
+
+/* ============================================================================
+   Scroll bars — slim, soft, borderless
+   ============================================================================ */
+
+.scroll-bar { -fx-background-color: transparent; }
+.scroll-bar .track, .scroll-bar .track-background { -fx-background-color: transparent; -fx-border-color: transparent; }
+.scroll-bar .thumb { -fx-background-color: #b5c3d8; -fx-background-radius: 6; -fx-background-insets: 2; }
+.scroll-bar .thumb:hover { -fx-background-color: #9cafc9; }
+.scroll-bar .increment-button, .scroll-bar .decrement-button { -fx-padding: 0; -fx-background-color: transparent; }
+.scroll-bar .increment-arrow, .scroll-bar .decrement-arrow { -fx-shape: " "; -fx-padding: 0; }
+.scroll-pane .corner { -fx-background-color: transparent; }
+
+.progress-indicator .percentage { -fx-fill: transparent; }
+
+/* ============================================================================
+   Full-screen visualizer overlay — floating neumorphic pill controls
+   ============================================================================ */
+
+.fs-overlay {
+    -fx-background-color: -neu-surface;
+    -fx-background-radius: 32;
+    -fx-padding: 12 18;
+    -fx-spacing: 14;
+    -fx-alignment: center;
+    -fx-effect: -neu-out;
+}
+.fs-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 22;
+    -fx-min-width: 44; -fx-min-height: 44; -fx-pref-width: 44; -fx-pref-height: 44;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+.fs-button:hover { -fx-background-color: -neu-surface-hover; -fx-effect: -neu-out-sm; }
+.fs-button:pressed { -fx-background-color: -neu-pressed; -fx-effect: -neu-in-sm; }
+.fs-exit .icon, .fs-exit:hover .icon { -fx-background-color: -accent; }
+
+/* ============================================================================
+   Menus, tooltips, dialogs — borderless soft panels
+   ============================================================================ */
+
+.context-menu, .menu-button .context-menu {
+    -fx-font-family: "Inter";
+    -fx-background-color: -neu-surface;
+    -fx-background-radius: 16;
+    -fx-padding: 8;
+    -fx-effect: -neu-out;
+}
+.menu-item { -fx-background-radius: 12; -fx-padding: 9 14; }
+.menu-item .label { -fx-text-fill: -text; }
+.menu-item:focused { -fx-background-color: -bg-deep; }
+.radio-menu-item .radio { -fx-background-color: -muted; }
+.tooltip {
+    -fx-font-family: "Inter";
+    -fx-background-color: #26334d;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-font-size: 12px;
+}
+.dialog-pane { -fx-background-color: -bg; -fx-font-family: "Inter"; -fx-effect: -neu-out; }
+.dialog-pane .label { -fx-text-fill: -text; }
+.dialog-pane > .button-bar > .container { -fx-background-color: -bg; }
+.dialog-pane .button {
+    -fx-background-color: -accent;
+    -fx-text-fill: white;
+    -fx-background-radius: 14;
+    -fx-padding: 9 20;
+}
+
+.splash { -fx-background-color: -bg; -fx-background-radius: 24; }

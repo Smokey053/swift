@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Run Swift",
+            "request": "launch",
+            "mainClass": "swift/com.swift.SwiftApp",
+            "vmArgs": "--module-path \"${env:JAVAFX_HOME}/lib\" --add-modules javafx.controls,javafx.media -Djava.library.path=\"${env:JAVAFX_HOME}/bin\""
+        }
+    ]
+}
